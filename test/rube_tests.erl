@@ -10,7 +10,7 @@ rube_test_() ->
                     ?assertEqual(pong, riakc_pb_socket:ping(Pid)),
                     ?assert(exit(Pid, normal))
             end},
-        {"",
+        {"all",
             fun() ->
                     application:start(rube),
 
@@ -37,5 +37,27 @@ rube_test_() ->
                     ?assert(exit(Pid, normal)),
 
                     application:stop(rube)
+            end},
+        {"bench",
+            fun() ->
+                    application:start(rube),
+
+                    C = rube:child_spec(pool, 10, 20, "127.0.0.1", 8087),
+                    {ok, Pid} = supervisor:start_child(rube_sup, C),
+
+                    ?assertEqual(ok, rube:put(pool, <<"api-key">>, <<"uuid">>, <<"domain">>)),
+
+                    %% from riak
+                    ?debugTime("From riak", rube:get(pool, <<"api-key">>, <<"uuid">>)),
+
+                    %% from cache
+                    ?debugTime("From cache", rube:get(pool, <<"api-key">>, <<"uuid">>)),
+
+                    ?assertEqual(ok, rube:delete(pool, <<"api-key">>, <<"uuid">>)),
+
+                    ?assert(exit(Pid, normal)),
+
+                    application:stop(rube)
             end}
+
     ].

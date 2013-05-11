@@ -71,3 +71,21 @@ TODO
 - Load balancing
 - Fault monitoring
 - Automatic uncoupling
+
+Load balancing
+--------------
+
+::
+
+    > rube:get(Bucket, Key, [{pool_name, PoolName}]).
+
+    > rube:get(Bucket, Key).
+
+Serialize
+---------
+
+::
+
+    > rube:get(Bucket, Key, [{format, msgpack}]).
+
+    > rube:put(Bucket, Key, Value, [{format, json}]).

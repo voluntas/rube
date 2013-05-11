@@ -1,0 +1,12 @@
+{application, rube,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { rube_app, []}},
+  {env, []}
+ ]}.

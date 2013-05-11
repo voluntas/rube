@@ -2,6 +2,12 @@
 Rube
 ####
 
+deps::
+
+   {rube,
+    ".*", {git, "git://github.com/voluntas.git", {branch, "develop"}}}
+    
+
 sample::
 
     > application:start(rube).

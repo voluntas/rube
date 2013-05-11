@@ -17,7 +17,7 @@ child_spec(Name, Size, MaxOverflow, Address, Port)
     poolboy:child_spec(Name, PoolArgs, WorkerArgs).
 
 
--spec get(atom(), binary(), binary()) -> ok | {ok, any()} | {error, term()}.
+-spec get(atom(), binary(), binary()) -> {ok, any()} | {error, term()}.
 get(PoolName, Bucket, Key) ->
     F = fun(Worker) ->
             rube_worker:get(Worker, Bucket, Key)

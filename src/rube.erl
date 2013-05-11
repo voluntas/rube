@@ -1,17 +1,14 @@
 -module(rube).
 
 -export([child_spec/5]).
--export([get/2, put/3, delete/2]).
+-export([get/3, put/4, delete/3]).
 
-%% Args = [{name, {local, pool1}},
-%%         {size, 10},
-%%         {max_overflow, 20},
-%%         {address, "127.0.0.1"},
-%%         {port, },
-%% Pool = rube:child_spec(pool1, Args),
-%% {ok, {{one_for_one, 10, 10}, [Pool]}}.
-
-child_spec(Name, Size, MaxOverflow, Address, Port) when is_atom(Name) ->
+child_spec(Name, Size, MaxOverflow, Address, Port)
+        when is_atom(Name) andalso
+             is_integer(Size) andalso
+             is_integer(MaxOverflow) andalso
+             is_list(Address) andalso
+             is_integer(Port) ->
     PoolArgs = [{name, {local, Name}},
                 {size, Size},
                 {max_overflow, MaxOverflow},
@@ -20,30 +17,23 @@ child_spec(Name, Size, MaxOverflow, Address, Port) when is_atom(Name) ->
     poolboy:child_spec(Name, PoolArgs, WorkerArgs).
 
 
--spec get(binary(), binary()) -> ok | {ok, any()} | {error, term()}.
-get(Bucket, Key) ->
+-spec get(atom(), binary(), binary()) -> ok | {ok, any()} | {error, term()}.
+get(PoolName, Bucket, Key) ->
     F = fun(Worker) ->
             rube_worker:get(Worker, Bucket, Key)
         end,        
-    PoolName = pool_name(),
     poolboy:transaction(PoolName, F).
 
--spec put(binary(), binary(), any()) -> ok | {error, term()}.
-put(Bucket, Key, Value) ->
+-spec put(atom(), binary(), binary(), any()) -> ok | {error, term()}.
+put(PoolName, Bucket, Key, Value) ->
     F = fun(Worker) ->
             rube_worker:put(Worker, Bucket, Key, Value)
         end,
-    PoolName = pool_name(),
     poolboy:transaction(PoolName, F).
 
--spec delete(binary(), binary()) -> ok | {error, term()}.
-delete(Bucket, Key) ->
+-spec delete(atom(), binary(), binary()) -> ok | {error, term()}.
+delete(PoolName, Bucket, Key) ->
     F = fun(Worker) ->
             rube_worker:delete(Worker, Bucket, Key)
         end,
-    PoolName = pool_name(),
     poolboy:transaction(PoolName, F).
-
-pool_name() ->
-    %% TODO(nakai): PoolName を判定する
-    default.

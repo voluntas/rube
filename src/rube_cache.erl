@@ -4,11 +4,7 @@
 
 -export([get/2, put/3, delete/2]).
 
-%% API キー情報を ets でキャッシュする expire 付き
-
-%% API Key / [Domain], Expire
-
-%% {Bucket, Key} / Value, Expire
+%% Bucket $ Key / Value, Expire
 
 -define(TABLE, rube_cache_table).
 
